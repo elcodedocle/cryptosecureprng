@@ -20,18 +20,18 @@ mt_rand on a single core, by the way, so it's clearly open for improvement if yo
 In a similar way as mt_rand(), random integers are chosen from a given range following a uniform distribution:
 
 ```php
-use synapp\info\tools\CryptoSecurePRNG;
-$secGen = new CryptoSecurePRNG();
+require_once 'CryptoSecurePRNG.php';
+$secGen =  new synapp\info\tools\CryptoSecurePRNG();
 $randInt = $secGen->rand(); //between 0 and mt_getrandmax()
-$randInt = $secGen(1,100) //between 1 and 100
-$randInt = $secGen(-50,50) //between -50 and 50
+$randInt = $secGen->rand(1,100); //between 1 and 100
+$randInt = $secGen->rand(-50,50); //between -50 and 50
 ```
 
 You can also get a string of random bytes:
 
 ```php
-use synapp\info\tools\CryptoSecurePRNG;
-$secGen = new CryptoSecurePRNG();
+require_once 'CryptoSecurePRNG.php';
+$secGen =  new synapp\info\tools\CryptoSecurePRNG();
 $stringLength = 20; // number of random chars to be generated
 $stringOfRandomChars = $secGen->getRandomBytesString($stringLength); // generate a string of $stringLength random ascii chars (non printable too)
 
