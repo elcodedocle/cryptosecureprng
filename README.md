@@ -1,7 +1,7 @@
 cryptosecureprng
 ================
 
-#####*mt_rand crypto safe byte strings and ints from a given range*
+#####*mt_rand forthe moderatley paranoid citizen*
 
  Copyright (C) 2014 Gael Abadin<br/>
  License: [MIT Expat][1] / beerware
