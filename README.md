@@ -40,6 +40,7 @@ $stringOfRandomChars = $secGen->getRandomBytesString($stringLength); // generate
 And here is the code to visualize the output using matlab:
 
 ```php
+// PHP code, uses cryptosecureprng rand() to generate the samples
 require_once 'CryptoSecurePRNG.php';
 $prng = new synapp\info\tools\CryptoSecurePRNG();                                                                         $out=''; 
 for ($i=0;$i<1280;$i++) for ($j=0;$j<720;$j++) { 
@@ -51,6 +52,7 @@ fclose($fh);
 ```
 
 ```matlab
+% Matlab code, reads and displays the generated samples
 x=csvread('testout.txt');
 C = reshape (x,720,1280,3);
 C = uint8(C);
