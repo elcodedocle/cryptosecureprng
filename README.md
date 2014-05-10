@@ -61,9 +61,9 @@ hist(x,256);
 saveas(gcf,'hist_output','png');
 ```
 
-Here is the rgb output ([Uncompressed source](http://i.minus.com/jZno4ib9xJYp1.bmp)):
+Here is the rgb output ([Uncompressed source](http://i4.minus.com/iZno4ib9xJYp1.bmp)):
 
-![1280x720 0-255 rgb output](http://i.minus.com/jZno4ib9xJYp1.bmp "1280x720 0-255 rgb output. Github uses jpeg compression. Go to http://i.minus.com/jZno4ib9xJYp1.bmp to fin the uncompressed source")
+![1280x720 0-255 rgb output](http://i4.minus.com/iZno4ib9xJYp1.bmp "1280x720 0-255 rgb output. Github uses jpeg compression. Uncompressed source available at http://i4.minus.com/iZno4ib9xJYp1.bmp")
 
 And here the 256-interval histogram:
 
