@@ -1,7 +1,7 @@
 cryptosecureprng
 ================
 
-#####*mt_rand forthe moderatley paranoid citizen*
+#####*mt_rand for the moderatley paranoid citizen*
 
  Copyright (C) 2014 Gael Abadin<br/>
  License: [MIT Expat][1] / beerware
@@ -36,6 +36,36 @@ $stringLength = 20; // number of random chars to be generated
 $stringOfRandomChars = $secGen->getRandomBytesString($stringLength); // generate a string of $stringLength random ascii chars (non printable too)
 
 ```
+
+And here is the code to visualize the output using matlab:
+
+```php
+require_once 'CryptoSecurePRNG.php';
+$prng = new synapp\info\tools\CryptoSecurePRNG();                                                                         $out=''; 
+for ($i=0;$i<1280;$i++) for ($j=0;$j<720;$j++) { 
+  $out .= $prng->rand(0,255).','.$prng->rand(0,255).','.$prng->rand(0,255).',';   
+}
+$fh = fopen('testout.txt','w');
+fwrite ($fh, $out);
+fclose($fh);
+```
+
+```matlab
+x=csvread('testout.txt');
+C = reshape (x,720,1280,3);
+C = uint8(C);
+imwrite(C,'rgb_output.bmp');
+hist(x,256);
+saveas(gcf,'hist_output','png');
+```
+
+Here is the rgb output:
+
+![1280x720 0-255 rgb output](http://i.minus.com/jZno4ib9xJYp1.bmp "1280x720 0-255 rgb output")
+
+And here the 256-interval histogram:
+
+![256-interval, 1280x720x3 0-255 samples histogram](http://i.minus.com/jnAXCdcY51T8o.png "256-interval 1280x720x3 samples histogram")
 
 Check the code (or generate the docs using phpdocumentor) if you want more info on tweaks and available parameters.
 
