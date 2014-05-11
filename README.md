@@ -13,7 +13,7 @@ but I recently wanted to build a [class able to pick random words from a diction
 so they could be used as passwords ([Correct, horse. That's a battery staple][2]). I probably overdid it... The result is my attempt on a 
 "cryptographically secure" mt_rand implementation, including a wrapper for selecting and using the 
 best random bytes generator from available extensions and /dev/urandom (about 100 times slower than 
-mt_rand on a single core, by the way, so it's clearly open for improvement if you want to fork it ;-))
+mt_rand on a single core, by the way, so clearly there is plenty of room for improvement if you want to fork it ;-))
 
 ### How to use
 
