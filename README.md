@@ -21,7 +21,7 @@ In a similar way as mt_rand(), random integers are chosen from a given range fol
 
 ```php
 require_once 'CryptoSecurePRNG.php';
-$secGen =  new synapp\info\tools\CryptoSecurePRNG();
+$secGen =  new synapp\info\tools\cryptosecureprng\CryptoSecurePRNG();
 $randInt = $secGen->rand(); //between 0 and mt_getrandmax()
 $randInt = $secGen->rand(1,100); //between 1 and 100
 $randInt = $secGen->rand(-50,50); //between -50 and 50
@@ -31,7 +31,7 @@ You can also get a string of random bytes:
 
 ```php
 require_once 'CryptoSecurePRNG.php';
-$secGen =  new synapp\info\tools\CryptoSecurePRNG();
+$secGen =  new synapp\info\tools\cryptosecureprng\CryptoSecurePRNG();
 $stringLength = 20; // number of random chars to be generated
 $stringOfRandomChars = $secGen->getRandomBytesString($stringLength); // generate a string of $stringLength random ascii chars (non printable too)
 
@@ -42,7 +42,8 @@ And here is the code to visualize the output using matlab:
 ```php
 // PHP code, uses cryptosecureprng rand() to generate the samples
 require_once 'CryptoSecurePRNG.php';
-$prng = new synapp\info\tools\CryptoSecurePRNG();                                                                         $out=''; 
+$prng = new synapp\info\tools\cryptosecureprng\CryptoSecurePRNG();
+$out=''; 
 for ($i=0;$i<1280;$i++) for ($j=0;$j<720;$j++) { 
   $out .= $prng->rand(0,255).','.$prng->rand(0,255).','.$prng->rand(0,255).',';   
 }
