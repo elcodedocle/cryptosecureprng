@@ -5,7 +5,7 @@
  * @license MIT Expat
  */
 
-namespace synapp\info\tools; //comment this line for PHP<5.3 compat
+namespace synapp\info\tools\cryptosecureprng; //comment this line for PHP<5.3 compat
 use Exception; //comment this line for PHP<5.3 compat
 
 /**
@@ -22,7 +22,7 @@ use Exception; //comment this line for PHP<5.3 compat
  * 
  * for all the moderately paranoid fellas out there
  * 
- * @package synapp\info\tools
+ * @package synapp\info\tools\cryptosecureprng
  */
 class CryptoSecurePRNG {
     /**
