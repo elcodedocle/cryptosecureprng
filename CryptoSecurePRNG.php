@@ -2,10 +2,11 @@
 /**
  * Crypto Secure PRNG
  * @copyright Gael Abadin (elcodedocle) 2014
- * @license MIT Expat
+ * @license MIT Expat (http://en.wikipedia.org/wiki/Expat_License)
+ * @version 0.2
  */
 
-namespace synapp\info\tools\cryptosecureprng; //comment this line for PHP<5.3 compat
+namespace synapp\info\tools\passwordgenerator\cryptosecureprng; //comment this line for PHP<5.3 compat
 use Exception; //comment this line for PHP<5.3 compat
 
 /**
@@ -22,7 +23,7 @@ use Exception; //comment this line for PHP<5.3 compat
  * 
  * for all the moderately paranoid fellas out there
  * 
- * @package synapp\info\tools\cryptosecureprng
+ * @package synapp\info\tools\passwordgenerator\cryptosecureprng
  */
 class CryptoSecurePRNG {
     /**
