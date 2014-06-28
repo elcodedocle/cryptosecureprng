@@ -5,7 +5,7 @@ cryptosecureprng
 
  Copyright (C) 2014 Gael Abadin<br/>
  License: [MIT Expat][1] / beerware< br/>
- [![Code Climate](https://codeclimate.com/repos/53aedc09e30ba0063b00464c/badges/e26726f9638d2c2351cb/gpa.png)](https://codeclimate.com/repos/53aedc09e30ba0063b00464c/feed)
+ [![Code Climate](https://codeclimate.com/github/elcodedocle/cryptosecureprng.png)](https://codeclimate.com/github/elcodedocle/cryptosecureprng)
  
 ### Motivation
 
