@@ -94,21 +94,28 @@ class CryptoSecurePRNG {
     }
 
     /**
-     * @param boolean $mcrypt (optional, null for default)
-     * @throws Exception
+     * @param string $flag 'mcrypt' or 'openssl'
+     * @param boolean $value (optional, null for default)
+     * @throws \Exception
      */
-    public function setMcrypt($mcrypt = null)
+    public function setFlag($flag, $value = null)
     {
-        if ($mcrypt===false){
-            $this->mcrypt = false;
-        } else if ($mcrypt!==true&&$mcrypt!==null){
-            throw new Exception ('$mcrypt must be boolean or null (default)');
-        } else if (function_exists('mcrypt_create_iv')){
-            $this->mcrypt = true;
-        } else if ($mcrypt === null){
-            $this->mcrypt = false;
-        } else { //if ($mcrypt === true)
-            throw new Exception ('mcrypt not supported');
+        if ($flag!=='mcrypt'&&$flag!=='openssl'){
+            throw new Exception ("$flag not supported");
+        }
+        if ($value===false){
+            $this->$flag = false;
+        } else if ($value!==true&&$value!==null){
+            throw new Exception ("$value must be boolean or null (default)");
+        } else if (
+            $flag === 'mcrypt' && function_exists('mcrypt_create_iv') ||
+            $flag === 'openssl' && function_exists('openssl_random_pseudo_bytes')
+        ){
+            $this->$flag = true;
+        } else if ($value === null){
+            $this->$flag = false;
+        } else { //if ($flag === true)
+            throw new Exception ("$flag not supported");
         }
     }
 
@@ -118,25 +125,6 @@ class CryptoSecurePRNG {
     public function getMcrypt()
     {
         return $this->mcrypt;
-    }
-
-    /**
-     * @param boolean $openssl
-     * @throws Exception
-     */
-    public function setOpenssl($openssl=null)
-    {
-        if ($openssl===false){
-            $this->openssl = false;
-        } else if ($openssl!==true&&$openssl!==null){
-            throw new Exception ('$openssl must be boolean or null (default)');
-        } else if (function_exists('openssl_random_pseudo_bytes')){
-            $this->openssl = true;
-        } else if ($openssl === null){
-            $this->openssl = false;
-        } else { //if ($openssl === true)
-            throw new Exception ('$openssl not supported');
-        }
     }
 
     /**
@@ -255,8 +243,8 @@ class CryptoSecurePRNG {
         } else {
             $this->setDefaultMax($defaultMax);
         }
-        $this->setMcrypt($mcrypt);
-        $this->setOpenssl($openssl);
+        $this->setFlag('mcrypt',$mcrypt);
+        $this->setFlag('openssl',$openssl);
         $this->setUrandom($urandom);
     }
     /**
