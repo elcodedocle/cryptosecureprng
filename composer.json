@@ -1,7 +1,7 @@
 {
     "name": "elcodedocle/cryptosecureprng",
     "type": "class",
-    "description": "UUID v3, v4, v5 generator class",
+    "description": "cryptographically secure pseudo-random number generator class with an mt_rand alike method interface",
     "keywords": ["pseudo-random number generator", "PRNG", "crypto safe PRNG", "mt_rand", "mcrypt", "urandom", "openssl"],
     "homepage": "https://github.com/elcodedocle/cryptosecureprng",
     "license": "MIT Expat",
