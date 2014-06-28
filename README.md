@@ -11,7 +11,7 @@ cryptosecureprng
 Ever wanted a [crypto safe](http://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator) mt_rand()? Not useful for many things I guess (maybe not useful at all), 
 but I recently wanted to build a [class able to pick random words from a dictionary in a safe way](https://github.com/elcodedocle/chbspassgen), 
 so they could be used as passwords ([Correct, horse. That's a battery staple][2]). I probably overdid it... The result is my attempt on a 
-"cryptographically secure" mt_rand implementation, including a wrapper for selecting and using the 
+"cryptographically secure" PRNG implementation with an mt_rand alike interface, including a wrapper for selecting and using the 
 best random bytes generator from available extensions and /dev/urandom (about 100 times slower than 
 mt_rand on a single core, by the way, so clearly there is plenty of room for improvement if you want to fork it ;-))
 

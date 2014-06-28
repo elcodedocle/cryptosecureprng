@@ -1,0 +1,11 @@
+{
+    "name": "elcodedocle/cryptosecureprng",
+    "type": "class",
+    "description": "UUID v3, v4, v5 generator class",
+    "keywords": ["pseudo-random number generator", "PRNG", "crypto safe PRNG", "mt_rand", "mcrypt", "urandom", "openssl"],
+    "homepage": "https://github.com/elcodedocle/cryptosecureprng",
+    "license": "MIT Expat",
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
