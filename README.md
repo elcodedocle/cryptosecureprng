@@ -4,7 +4,7 @@ cryptosecureprng
 #####*mt_rand for the moderatley paranoid citizen*
 
  Copyright (C) 2014 Gael Abadin<br/>
- License: [MIT Expat][1] / beerware< br/>
+ License: [MIT Expat][1] / beerware<br/>
  [![Code Climate](https://codeclimate.com/github/elcodedocle/cryptosecureprng.png)](https://codeclimate.com/github/elcodedocle/cryptosecureprng)
  
 ### Motivation
