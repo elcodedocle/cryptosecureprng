@@ -1,7 +1,7 @@
 cryptosecureprng
 ================
 
-#####*mt_rand for the moderatley paranoid citizen*
+#####*mt_rand for the moderately paranoid citizen*
 
  Copyright (C) 2014 Gael Abadin<br/>
  License: [MIT Expat][1] / beerware<br/>
