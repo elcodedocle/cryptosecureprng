@@ -207,14 +207,28 @@ class CryptoSecurePRNG {
      * @return int generated int
      * @throws Exception An exception with error message on invalid parameters
      */
-    public function rand($min = 0, $max = null){
-        if ($max === null) { $max = $this->defaultMax; }
-        if (!is_int($min)||!is_int($max)) { throw new Exception('$min and $max must be integers'); }
-        if ($min>$max) { throw new Exception('$min must be <= $max'); }
-        $chars = $this->getRandomBytesString($this->intByteCount);
-        $n = 0;
-        for ($i=0;$i<strlen($chars);$i++) {$n|=(ord($chars[$i])<<(8*(strlen($chars)-$i-1)));}
-        return (abs($n)%($max-$min+1))+$min;
+    public function rand($min = 0, $max = null)
+    {
+        if ($max === null) {
+            $max = $this->defaultMax;
+        }
+        if (!is_int($min) || !is_int($max)) {
+            throw new Exception('$min and $max must be integers');
+        }
+        if ($min > $max) {
+            throw new Exception('$min must be <= $max');
+        }
+        $range = $max - $min + 1; // Size of range
+        $top   = (PHP_INT_MAX / $range) * $range; // Maximum acceptable value to ensure uniform distribution
+        do {
+            $chars = $this->getRandomBytesString($this->intByteCount); // Get bytes
+            $n     = 0;
+            for ($i = 0; $i < strlen($chars); $i++) {
+                $n |= (ord($chars[$i]) << (8 * (strlen($chars) - $i - 1))); // Create integer from random bytes
+            }
+            $n &= PHP_INT_MAX; // Remove most significant bit (same as abs($n))
+        } while ($n >= $top); //When $n >= $top the distribution of numbers is not uniform and we discard these numbers (you can expect avg 1.5 loops)
+        return $n % $range + $min; //Normalise to wanted range
     }
 
     /**
