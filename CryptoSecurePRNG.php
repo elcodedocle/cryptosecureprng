@@ -211,9 +211,18 @@ class CryptoSecurePRNG {
         if ($max === null) { $max = $this->defaultMax; }
         if (!is_int($min)||!is_int($max)) { throw new Exception('$min and $max must be integers'); }
         if ($min>$max) { throw new Exception('$min must be <= $max'); }
-        $chars = $this->getRandomBytesString($this->intByteCount);
-        $n = 0;
-        for ($i=0;$i<strlen($chars);$i++) {$n|=(ord($chars[$i])<<(8*(strlen($chars)-$i-1)));}
+        // pow(2,$numBits-1) calculated as (pow(2,$numBits-2)-1) + pow(2,$numBits-2) to avoid overflow when $numBits is the number of bits of PHP_INT_MAX
+        $maxSafe = (int) floor(
+            ((pow(2,8*$this->intByteCount-2)-1) + pow(2,8*$this->intByteCount-2)) 
+            / 
+            ($max - $min)
+        ) * ($max - $min);
+        // discards anything above the last interval (max-min) * {0 .. max - min -1} that fits in {0 ..  2^intBitCount-1}
+        do {
+            $chars = $this->getRandomBytesString($this->intByteCount);
+            $n = 0;
+            for ($i=0;$i<$this->intByteCount;$i++) {$n|=(ord($chars[$i])<<(8*($this->intByteCount-$i-1)));}
+        } while (abs($n)>$maxSafe);
         return (abs($n)%($max-$min+1))+$min;
     }
 
