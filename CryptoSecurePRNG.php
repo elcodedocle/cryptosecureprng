@@ -217,7 +217,7 @@ class CryptoSecurePRNG {
             / 
             ($max - $min)
         ) * ($max - $min);
-        // discards anything above the last interval (max-min) * {0 .. max - min -1} that fits in {0 ..  2^intBitCount-1}
+        // discards anything above the last interval N * {0 .. max - min -1} that fits in {0 ..  2^intBitCount-1}
         do {
             $chars = $this->getRandomBytesString($this->intByteCount);
             $n = 0;
