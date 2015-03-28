@@ -3,7 +3,7 @@
  * Crypto Secure PRNG
  * @copyright Gael Abadin (elcodedocle) 2014
  * @license MIT Expat (http://en.wikipedia.org/wiki/Expat_License)
- * @version 0.2.0-beta
+ * @version 0.2.1-beta
  */
 
 namespace synapp\info\tools\passwordgenerator\cryptosecureprng; //comment this line for PHP<5.3 compat
