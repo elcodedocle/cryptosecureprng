@@ -188,12 +188,9 @@ class CryptoSecurePRNG {
                 $chars .= fread($this->urandomFileHandler, $byteCount - $len);
             }
         }
-        // if it fails, use mt_rand in the safest possible way
+        // if it fails, throw an Exception
         if ($len = strlen($chars) < $byteCount) {
-            for ($i=0;$i<$len;$i++) { $chars[$i] = $chars[$i] ^ chr(mt_rand(0, 255)); }
-            for ($i = $len; $i < $byteCount; $i++) {
-                $chars .= chr(mt_rand(0, 255));
-            }
+            throw new Exception('Cannot use a cryptographically secure PRNG.');
         }
         return $chars;
     }
