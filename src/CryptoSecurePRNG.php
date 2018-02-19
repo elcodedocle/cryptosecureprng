@@ -6,26 +6,30 @@
  * @version 0.2.2-beta
  */
 
-namespace synapp\info\tools\passwordgenerator\cryptosecureprng; //comment this line for PHP<5.3 compat
-use Exception; //comment this line for PHP<5.3 compat
+namespace synapp\info\tools\passwordgenerator\cryptosecureprng;
+//comment this line for PHP<5.3 compat
+use Exception;
+
+//comment this line for PHP<5.3 compat
 
 /**
  * Class CryptoSecurePRNG
- * 
+ *
  * Generates crypto safe byte strings and ints from a given range
  *
- * This class, generates crypto safe byte strings (in fact only a wrapper for using the best method available) 
+ * This class, generates crypto safe byte strings (in fact only a wrapper for using the best method available)
  * and ints  from a given range (like mt_rand(), but in a safe way. This is the interesting part!)
- * 
- * it uses mcrypt extensions if available, falling back to openssl if available, and falling back to /dev/urandom 
+ *
+ * it uses mcrypt extensions if available, falling back to openssl if available, and falling back to /dev/urandom
  * if available. It requires PHP 5.3 or higher for two reasons: namespaces, and the use of MCRYPT_DEV_URANDOM as device
- * on mcrypt extension mcrypt_create_iv call, which is not available in windows prior to PHP 5.3 
- * 
+ * on mcrypt extension mcrypt_create_iv call, which is not available in windows prior to PHP 5.3
+ *
  * for all the moderately paranoid fellas out there
- * 
+ *
  * @package synapp\info\tools\passwordgenerator\cryptosecureprng
  */
-class CryptoSecurePRNG {
+class CryptoSecurePRNG
+{
     /**
      * @var int stores the size of an int in bytes
      */
@@ -34,6 +38,10 @@ class CryptoSecurePRNG {
      * @var int stores the default max value for the random integer generator
      */
     private $defaultMax;
+    /**
+     * @var bool whether or not random_bytes is available
+     */
+    private $randomBytes;
     /**
      * @var bool whether or not mcrypt is available
      */
@@ -57,7 +65,7 @@ class CryptoSecurePRNG {
      */
     public function setDefaultMax($defaultMax)
     {
-        if (is_int($defaultMax)){
+        if (is_int($defaultMax)) {
             $this->defaultMax = $defaultMax;
         } else {
             throw new Exception('Construct parameter $defaultMax must be an integer.');
@@ -78,10 +86,11 @@ class CryptoSecurePRNG {
      */
     public function setIntByteCount($intByteCount)
     {
-        if (is_int($intByteCount)&&$intByteCount>0){
+        if (is_int($intByteCount) && $intByteCount > 0 && $intByteCount <= PHP_INT_SIZE) {
             $this->intByteCount = $intByteCount;
         } else {
-            throw new Exception('Construct parameter $intByteCount must be an integer > 0.');
+            throw new Exception(
+                'Construct parameter $intByteCount must be an integer > 0 and <= PHP_INT_SIZE.');
         }
     }
 
@@ -96,25 +105,26 @@ class CryptoSecurePRNG {
     /**
      * @param string $flag 'mcrypt' or 'openssl'
      * @param boolean $value (optional, null for default)
-     * @throws \Exception
+     * @throws Exception
      */
     public function setFlag($flag, $value = null)
     {
-        if ($flag!=='mcrypt'&&$flag!=='openssl'){
+        if ($flag !== 'mcrypt' && $flag !== 'openssl' && $flag !== 'randomBytes') {
             throw new Exception ("$flag not supported");
         }
-        if ($value===false){
+        if ($value === false) {
             $this->$flag = false;
-        } else if ($value!==true&&$value!==null){
+        } elseif ($value !== true && $value !== null) {
             throw new Exception ("$value must be boolean or null (default)");
-        } else if (
+        } elseif (
             $flag === 'mcrypt' && function_exists('mcrypt_create_iv') ||
-            $flag === 'openssl' && function_exists('openssl_random_pseudo_bytes')
-        ){
+            $flag === 'openssl' && function_exists('openssl_random_pseudo_bytes') ||
+            $flag === 'randomBytes' && function_exists('random_bytes')
+        ) {
             $this->$flag = true;
-        } else if ($value === null){
+        } elseif ($value === null) {
             $this->$flag = false;
-        } else { //if ($flag === true)
+        } else { //if ($value === true)
             throw new Exception ("$flag not supported");
         }
     }
@@ -141,17 +151,17 @@ class CryptoSecurePRNG {
      */
     public function setUrandom($urandom = null)
     {
-        if ($urandom===false){
+        if ($urandom === false) {
             $this->urandom = false;
-        } else if ($urandom!==true&&$urandom!==null){
+        } elseif ($urandom !== true && $urandom !== null) {
             throw new Exception ('$urandom must be boolean or null (default)');
-        } else if (is_readable('/dev/urandom')){
-            if ($this->urandomFileHandler = fopen('/dev/urandom', 'r')!==false){
+        } elseif (is_readable('/dev/urandom')) {
+            if ($this->urandomFileHandler = fopen('/dev/urandom', 'r') !== false) {
                 $this->urandom = true;
             } else {
                 throw new Exception('/dev/urandom is readable but can\'t get a file handler with fopen.');
             }
-        } else if ($urandom === null){
+        } elseif ($urandom === null) {
             $this->urandom = false;
         } else { //if ($urandom === true)
             throw new Exception ('$urandom not supported');
@@ -165,18 +175,26 @@ class CryptoSecurePRNG {
     {
         return $this->urandom;
     }
-    
+
     /**
      * generates crypto safe bytes and puts them into a string of chars
-     * 
+     *
      * @param $byteCount number of crypto safe random chars to generate
      * @return string string of generated crypto safe random chars
+     * @throws Exception
      */
-    public function getRandomBytesString($byteCount){
+    public function getRandomBytesString($byteCount)
+    {
         $chars = '';
-        // try mcrypt
-        if ($this->mcrypt) {
-            $chars = mcrypt_create_iv($byteCount, MCRYPT_DEV_URANDOM);
+        if ($this->randomBytes) {
+            // mcrypt_create_iv is not available
+            // but https://www.php.net/manual/en/function.random-bytes.php is
+            // See https://www.php.net/manual/en/function.mcrypt-create-iv.php
+            $chars = random_bytes($byteCount);
+        }
+        // if random_bytes fails, try mcrypt
+        if (!$chars && $this->mcrypt) {
+            $chars = mcrypt_create_iv($byteCount);
         }
         // if it fails, use openssl_random_pseudo_bytes
         if (!$chars && $this->openssl) {
@@ -184,43 +202,53 @@ class CryptoSecurePRNG {
         }
         // if it fails, try /dev/urandom (will work only on unix based systems)
         if (!$chars && $this->urandom) {
-            while (($len  = strlen($chars))< $byteCount) {
+            while (($len = strlen($chars)) < $byteCount) {
                 $chars .= fread($this->urandomFileHandler, $byteCount - $len);
             }
         }
         // if it fails, throw an Exception
-        if ($len = strlen($chars) < $byteCount) {
+        if (strlen($chars) < $byteCount) {
             throw new Exception('Cannot use a cryptographically secure PRNG.');
         }
         return $chars;
     }
+
     /**
      * generates crypto safe ints inside a given range
-     * 
+     *
      * Works like mt_rand. (2 parameters required. If no parameter is given default range is [0,PHP_INT_MAX])
-     * 
+     *
      * @param int $min min int from the range to be generated. Defaults to 0
      * @param int $max nax int from the range to be generated. Defaults to PHP_INT_MAX
      * @return int generated int
      * @throws Exception An exception with error message on invalid parameters
      */
-    public function rand($min = 0, $max = null){
-        if ($max === null) { $max = $this->defaultMax; }
-        if (!is_int($min)||!is_int($max)) { throw new Exception('$min and $max must be integers'); }
-        if ($min>$max) { throw new Exception('$min must be <= $max'); }
-        // pow(2,$numBits-1) calculated as (pow(2,$numBits-2)-1) + pow(2,$numBits-2) to avoid overflow when $numBits is the number of bits of PHP_INT_MAX
-        $maxSafe = (int) floor(
-            ((pow(2,8*$this->intByteCount-2)-1) + pow(2,8*$this->intByteCount-2)) 
-            / 
-            ($max - $min)
-        ) * ($max - $min);
+    public function rand($min = 0, $max = null)
+    {
+        if ($max === null) {
+            $max = $this->defaultMax;
+        }
+        if (!is_int($min) || !is_int($max)) {
+            throw new Exception('$min and $max must be integers');
+        }
+        if ($min > $max) {
+            throw new Exception('$min must be <= $max');
+        }
+        if ($min == $max) {
+            return $min;
+        }
+        $fullRangeMaxSafe = $this->intByteCount >= PHP_INT_SIZE ? (PHP_INT_MAX >> 1)
+            : pow(2, 8 * $this->intByteCount - 1) - 1;
+        $maxSafe = (int)floor($fullRangeMaxSafe / ($max - $min)) * ($max - $min);
         // discards anything above the last interval N * {0 .. max - min -1} that fits in {0 ..  2^(intBitCount-1)-1}
         do {
             $chars = $this->getRandomBytesString($this->intByteCount);
             $n = 0;
-            for ($i=0;$i<$this->intByteCount;$i++) {$n|=(ord($chars[$i])<<(8*($this->intByteCount-$i-1)));}
-        } while (abs($n)>$maxSafe);
-        return (abs($n)%($max-$min+1))+$min;
+            for ($i = 0; $i < $this->intByteCount; $i++) {
+                $n |= (ord($chars[$i]) << (8 * ($this->intByteCount - $i - 1)));
+            }
+        } while (abs($n) > $maxSafe);
+        return (abs($n) % ($max - $min + 1)) + $min;
     }
 
     /**
@@ -231,34 +259,34 @@ class CryptoSecurePRNG {
      * @param mixed $mcrypt (optional, boolean, null for default) set mcrypt availability
      * @param mixed $openssl (optional, boolean, null for default) set openssl availability
      * @param mixed $urandom (optional, boolean, null for default) set urandom availability
+     * @param mixed $randomBytes (optional, boolean, null for default) set random_bytes availability
      * @throws Exception an exception containing an error message on invalid parameters or other errors
      */
-    public function __construct($intByteCount = null, $defaultMax = null, $mcrypt = null, $openssl = null, $urandom = null){
-        if ($intByteCount === null){
-            $this->setIntByteCount(
-                (strlen(PHP_INT_MAX) === 10)?4:
-                    ((strlen(PHP_INT_MAX) === 19)?8:
-                        ((strlen(PHP_INT_MAX) === 39)?16:
-                            ((strlen(PHP_INT_MAX) === 77)?32:
-                                2))));
+    public function __construct($intByteCount = null, $defaultMax = null, $mcrypt = null, $openssl = null, $urandom = null, $randomBytes = null)
+    {
+        if ($intByteCount === null) {
+            $this->setIntByteCount(PHP_INT_SIZE);
         } else {
             $this->setIntByteCount($intByteCount);
         }
-        if ($defaultMax === null){
+        if ($defaultMax === null) {
             $this->setDefaultMax(mt_getrandmax());
         } else {
             $this->setDefaultMax($defaultMax);
         }
-        $this->setFlag('mcrypt',$mcrypt);
-        $this->setFlag('openssl',$openssl);
+        $this->setFlag('mcrypt', $mcrypt);
+        $this->setFlag('openssl', $openssl);
+        $this->setFlag('randomBytes', $randomBytes);
         $this->setUrandom($urandom);
     }
+
     /**
      * Destructor function. It just closes the /dev/urandom file handler, if opened.
      */
-    public function __destruct(){
-        if (is_resource($this->urandomFileHandler) && (get_resource_type($this->urandomFileHandler)==='file')){
-            fclose ($this->urandomFileHandler);
+    public function __destruct()
+    {
+        if (is_resource($this->urandomFileHandler) && (get_resource_type($this->urandomFileHandler) === 'file')) {
+            fclose($this->urandomFileHandler);
         }
     }
-} 
+}
